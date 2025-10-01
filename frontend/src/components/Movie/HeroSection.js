@@ -1,21 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/button';
 import { Play, Info, Plus, Volume2, VolumeX } from 'lucide-react';
-import { featuredMovie } from '../../mock/data';
+import { moviesAPI } from '../../services/api';
 import MovieModal from './MovieModal';
 
 const HeroSection = () => {
   const { addToWatchlist, removeFromWatchlist, isInWatchlist } = useAuth();
   const [showModal, setShowModal] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [featuredMovie, setFeaturedMovie] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFeaturedMovie = async () => {
+      try {
+        const movie = await moviesAPI.getFeatured();
+        setFeaturedMovie(movie);
+      } catch (error) {
+        console.error('Failed to fetch featured movie:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchFeaturedMovie();
+  }, []);
+
+  if (loading || !featuredMovie) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-black">
+        <div className="text-white text-xl">Loading...</div>
+      </div>
+    );
+  }
+
   const inWatchlist = isInWatchlist(featuredMovie.id);
 
-  const handleWatchlistToggle = () => {
-    if (inWatchlist) {
-      removeFromWatchlist(featuredMovie.id);
-    } else {
-      addToWatchlist(featuredMovie.id);
+  const handleWatchlistToggle = async () => {
+    try {
+      if (inWatchlist) {
+        await removeFromWatchlist(featuredMovie.id);
+      } else {
+        await addToWatchlist(featuredMovie.id);
+      }
+    } catch (error) {
+      console.error('Failed to update watchlist:', error);
     }
   };
 
@@ -25,7 +55,7 @@ const HeroSection = () => {
         {/* Background Image */}
         <div className="absolute inset-0">
           <img
-            src={featuredMovie.backdrop}
+            src={featuredMovie.backdrop_path}
             alt={featuredMovie.title}
             className="w-full h-full object-cover"
           />
@@ -38,7 +68,9 @@ const HeroSection = () => {
           {/* Netflix Logo/Badge */}
           <div className="flex items-center space-x-2 mb-4">
             <span className="text-red-600 font-bold text-sm">N</span>
-            <span className="text-white text-sm font-medium tracking-wider">SERIES</span>
+            <span className="text-white text-sm font-medium tracking-wider">
+              {featuredMovie.media_type === 'tv' ? 'SERIES' : 'FILM'}
+            </span>
           </div>
 
           {/* Title */}
@@ -48,17 +80,18 @@ const HeroSection = () => {
 
           {/* Description */}
           <p className="text-white text-lg md:text-xl mb-6 leading-relaxed max-w-xl opacity-90">
-            {featuredMovie.description}
+            {featuredMovie.overview}
           </p>
 
           {/* Meta Info */}
           <div className="flex items-center space-x-4 text-white mb-8">
-            <span className="text-green-500 font-semibold">97% Match</span>
-            <span>{featuredMovie.year}</span>
-            <span className="border border-gray-400 px-2 py-1 text-sm">
-              {featuredMovie.rating}
+            <span className="text-green-500 font-semibold">
+              {Math.round(featuredMovie.vote_average * 10)}% Match
             </span>
-            <span className="text-sm">{featuredMovie.genre}</span>
+            <span>{featuredMovie.release_date?.split('-')[0]}</span>
+            <span className="border border-gray-400 px-2 py-1 text-sm">
+              {featuredMovie.vote_average > 8 ? 'HD' : 'SD'}
+            </span>
           </div>
 
           {/* Action Buttons */}

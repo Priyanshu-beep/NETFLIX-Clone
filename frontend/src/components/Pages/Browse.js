@@ -1,10 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../Layout/Header';
 import HeroSection from '../Movie/HeroSection';
 import MovieRow from '../Movie/MovieRow';
-import { popularMovies, trendingShows, actionMovies } from '../../mock/data';
+import { moviesAPI } from '../../services/api';
 
 const Browse = () => {
+  const [popularMovies, setPopularMovies] = useState([]);
+  const [trendingContent, setTrendingContent] = useState([]);
+  const [actionMovies, setActionMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        const [popular, trending, action] = await Promise.all([
+          moviesAPI.getPopular(),
+          moviesAPI.getTrending('all', 'week'),
+          moviesAPI.getByGenre(28), // Action genre ID
+        ]);
+        
+        setPopularMovies(popular);
+        setTrendingContent(trending);
+        setActionMovies(action);
+      } catch (error) {
+        console.error('Failed to fetch content:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchContent();
+  }, []);
+
   return (
     <div className="min-h-screen bg-black">
       <Header />
@@ -15,12 +42,20 @@ const Browse = () => {
         
         {/* Content Rows */}
         <div className="relative z-10 -mt-32">
-          <MovieRow title="Popular on Netflix" movies={popularMovies} />
-          <MovieRow title="Trending Now" movies={trendingShows} />
-          <MovieRow title="Action Movies" movies={actionMovies} />
-          <MovieRow title="Continue Watching" movies={popularMovies.slice(0, 4)} cardSize="small" />
-          <MovieRow title="New Releases" movies={[...trendingShows, ...popularMovies].slice(0, 6)} />
-          <MovieRow title="Only on Netflix" movies={actionMovies} cardSize="large" />
+          {loading ? (
+            <div className="flex justify-center py-20">
+              <div className="text-white text-xl">Loading content...</div>
+            </div>
+          ) : (
+            <>
+              <MovieRow title="Popular on Netflix" movies={popularMovies} />
+              <MovieRow title="Trending Now" movies={trendingContent} />
+              <MovieRow title="Action Movies" movies={actionMovies} />
+              <MovieRow title="Continue Watching" movies={popularMovies.slice(0, 4)} cardSize="small" />
+              <MovieRow title="New Releases" movies={trendingContent.slice(0, 6)} />
+              <MovieRow title="Only on Netflix" movies={actionMovies.slice(0, 5)} cardSize="large" />
+            </>
+          )}
         </div>
       </main>
       

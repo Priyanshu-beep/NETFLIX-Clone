@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../Layout/Header';
 import MovieCard from '../Movie/MovieCard';
 import { useAuth } from '../../contexts/AuthContext';
-import { popularMovies, trendingShows, actionMovies } from '../../mock/data';
+import { moviesAPI } from '../../services/api';
 import { Search as SearchIcon, Filter } from 'lucide-react';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
@@ -16,34 +16,32 @@ const Search = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
 
-  // Combine all movies for search
-  const allContent = [...popularMovies, ...trendingShows, ...actionMovies];
-
-  const handleSearch = (query = searchQuery) => {
+  const handleSearch = async (query = searchQuery) => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      return;
+    }
+    
     setIsSearching(true);
     
-    // Simulate search delay
-    setTimeout(() => {
-      let results = allContent;
+    try {
+      const results = await moviesAPI.search(query);
+      let filteredResults = results;
       
-      // Filter by search query
-      if (query.trim()) {
-        results = results.filter(item => 
-          item.title.toLowerCase().includes(query.toLowerCase()) ||
-          item.genre.toLowerCase().includes(query.toLowerCase())
+      // Filter by type if specified
+      if (selectedType !== 'all') {
+        filteredResults = filteredResults.filter(item => 
+          selectedType === 'movie' ? item.media_type === 'movie' : item.media_type === 'tv'
         );
       }
       
-      // Filter by genre
-      if (selectedGenre !== 'all') {
-        results = results.filter(item => 
-          item.genre.toLowerCase().includes(selectedGenre.toLowerCase())
-        );
-      }
-      
-      setSearchResults(results);
+      setSearchResults(filteredResults);
+    } catch (error) {
+      console.error('Search failed:', error);
+      setSearchResults([]);
+    } finally {
       setIsSearching(false);
-    }, 300);
+    }
   };
 
   React.useEffect(() => {
@@ -62,7 +60,7 @@ const Search = () => {
     } else {
       setSearchResults([]);
     }
-  }, [selectedGenre, selectedType]);
+  }, [selectedType]);
 
   return (
     <div className="min-h-screen bg-black">
@@ -90,28 +88,14 @@ const Search = () => {
             <Button
               onClick={() => handleSearch()}
               className="bg-red-600 hover:bg-red-700 text-white px-8 h-12 text-lg font-semibold"
+              disabled={isSearching}
             >
-              Search
+              {isSearching ? 'Searching...' : 'Search'}
             </Button>
           </div>
           
           {/* Filters */}
           <div className="flex flex-wrap gap-4">
-            <Select value={selectedGenre} onValueChange={setSelectedGenre}>
-              <SelectTrigger className="w-48 bg-gray-800 border-gray-600 text-white">
-                <SelectValue placeholder="All Genres" />
-              </SelectTrigger>
-              <SelectContent className="bg-gray-800 border-gray-600 text-white">
-                <SelectItem value="all">All Genres</SelectItem>
-                <SelectItem value="action">Action</SelectItem>
-                <SelectItem value="comedy">Comedy</SelectItem>
-                <SelectItem value="drama">Drama</SelectItem>
-                <SelectItem value="horror">Horror</SelectItem>
-                <SelectItem value="sci-fi">Sci-Fi</SelectItem>
-                <SelectItem value="thriller">Thriller</SelectItem>
-              </SelectContent>
-            </Select>
-            
             <Select value={selectedType} onValueChange={setSelectedType}>
               <SelectTrigger className="w-48 bg-gray-800 border-gray-600 text-white">
                 <SelectValue placeholder="All Types" />
@@ -147,7 +131,7 @@ const Search = () => {
             {searchResults.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                 {searchResults.map((item) => (
-                  <MovieCard key={item.id} movie={item} size="normal" />
+                  <MovieCard key={`${item.media_type}-${item.id}`} movie={item} size="normal" />
                 ))}
               </div>
             ) : (
@@ -155,7 +139,7 @@ const Search = () => {
                 <div className="text-center py-20">
                   <SearchIcon className="w-16 h-16 text-gray-600 mx-auto mb-4" />
                   <h3 className="text-white text-xl font-semibold mb-2">Start Your Search</h3>
-                  <p className="text-gray-400">Search for movies and TV shows by title or genre</p>
+                  <p className="text-gray-400">Search for movies and TV shows by title</p>
                 </div>
               )
             )}
