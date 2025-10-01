@@ -3,6 +3,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/button';
 import { Plus, Play, ChevronDown } from 'lucide-react';
 import MovieModal from './MovieModal';
+import { transformMovieData } from '../../utils/movieDataTransform';
 
 const MovieCard = ({ movie, size = 'normal' }) => {
   const { addToWatchlist, removeFromWatchlist, isInWatchlist } = useAuth();
