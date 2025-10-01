@@ -5,6 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { watchlistAPI } from '../../services/api';
 import { Heart, Trash2 } from 'lucide-react';
 import { Button } from '../ui/button';
+import { transformMoviesArray } from '../../utils/movieDataTransform';
 
 const MyList = () => {
   const { user, removeFromWatchlist, refreshWatchlist } = useAuth();
