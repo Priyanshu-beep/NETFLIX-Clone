@@ -16,7 +16,7 @@ const MyList = () => {
     const fetchWatchlist = async () => {
       try {
         const response = await watchlistAPI.get();
-        setWatchlistMovies(response.watchlist);
+        setWatchlistMovies(transformMoviesArray(response.watchlist));
       } catch (error) {
         console.error('Failed to fetch watchlist:', error);
       } finally {
