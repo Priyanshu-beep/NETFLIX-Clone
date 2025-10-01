@@ -16,7 +16,7 @@ import os
 from pathlib import Path
 
 # Get database from server.py
-from ..server import db
+from server import db
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 security = HTTPBearer()
