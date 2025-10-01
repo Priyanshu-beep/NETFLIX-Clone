@@ -408,8 +408,14 @@ metadata:
 
 test_plan:
   current_focus:
-    - "All backend APIs tested and working"
-  stuck_tasks: []
+    - "Movie Modal Functionality"
+    - "Watchlist Features (Mixed Content Error)"
+    - "Search Results Display"
+  stuck_tasks:
+    - "Movie Modal Functionality"
+    - "Watchlist Features"
+    - "Search Functionality"
+    - "Error Handling"
   test_all: true
   test_priority: "high_first"
 
