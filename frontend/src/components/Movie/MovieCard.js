@@ -29,7 +29,7 @@ const MovieCard = ({ movie, size = 'normal' }) => {
 
   return (
     <MovieModal 
-      movie={movie} 
+      movie={transformedMovie} 
       isOpen={showModal} 
       onClose={() => setShowModal(false)}
     >
