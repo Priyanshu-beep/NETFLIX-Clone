@@ -5,9 +5,11 @@ from fastapi import HTTPException, status
 from typing import Optional
 from models import UserResponse
 import os
+import hashlib
+import secrets
 
-# Password hashing
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto", bcrypt__default_rounds=12)
+# Password hashing - using simple approach to avoid bcrypt issues
+# pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # JWT settings
 SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "your-secret-key-change-in-production")
