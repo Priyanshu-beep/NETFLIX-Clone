@@ -86,7 +86,7 @@ const MovieModal = ({ movie, isOpen, onClose, children }) => {
                 </div>
 
                 <p className="text-gray-300 mb-6 leading-relaxed">
-                  {movie.description || `Experience the thrilling world of ${movie.title}. This ${movie.genre.toLowerCase()} will keep you on the edge of your seat with its compelling storyline and outstanding performances.`}
+                  {movie.description || `Experience the thrilling world of ${movie.title}. This ${movie.genre ? movie.genre.toLowerCase() : 'movie'} will keep you on the edge of your seat with its compelling storyline and outstanding performances.`}
                 </p>
 
                 {/* Action Buttons */}
