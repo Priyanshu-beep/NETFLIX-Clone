@@ -7,9 +7,9 @@ import asyncio
 
 class TMDBService:
     def __init__(self):
-        self.api_key = "c8dea14dc917687ac631a52620e4f7ad"  # Primary API key
+        self.api_key = os.environ.get("TMDB_API_KEY", "c8dea14dc917687ac631a52620e4f7ad")
         self.backup_keys = [
-            "3cb41ecea3bf606c56552db3d17adefd",  # Backup key
+            os.environ.get("TMDB_BACKUP_KEY_1", "3cb41ecea3bf606c56552db3d17adefd"),
         ]
         self.base_url = "https://api.themoviedb.org/3"
         self.image_base_url = "https://image.tmdb.org/t/p"
