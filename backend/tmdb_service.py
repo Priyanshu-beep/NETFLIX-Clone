@@ -2,7 +2,7 @@ import httpx
 import os
 from typing import List, Dict, Any, Optional
 from fastapi import HTTPException
-from .models import Movie, TVShow, Genre, MovieDetail
+from models import Movie, TVShow, Genre, MovieDetail
 import asyncio
 
 class TMDBService:
