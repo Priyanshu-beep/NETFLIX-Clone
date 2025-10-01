@@ -4,18 +4,20 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from bson import ObjectId
 from datetime import datetime
 from typing import List
-from ..models import (
+from models import (
     UserCreate, UserLogin, UserResponse, UserUpdate, 
     AuthResponse, MessageResponse
 )
-from ..auth import (
+from auth import (
     get_password_hash, verify_password, create_access_token, 
     get_current_user_id
 )
 import os
 from pathlib import Path
 
-# Get database from server.py
+# Import database connection
+import sys
+sys.path.append('/app/backend')
 from server import db
 
 router = APIRouter(prefix="/auth", tags=["authentication"])

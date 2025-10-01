@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from typing import List
-from ..models import Genre
-from ..tmdb_service import TMDBService
+from models import Genre
+from tmdb_service import TMDBService
 
 router = APIRouter(prefix="/genres", tags=["genres"])
 tmdb = TMDBService()

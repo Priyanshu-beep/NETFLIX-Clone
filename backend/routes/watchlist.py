@@ -1,10 +1,12 @@
 from fastapi import APIRouter, HTTPException, Depends
 from typing import List
 from bson import ObjectId
-from ..models import Movie, WatchlistResponse, MessageResponse
-from ..routes.auth import get_current_user
-from ..tmdb_service import TMDBService
-from ..server import db
+from models import Movie, WatchlistResponse, MessageResponse
+from routes.auth import get_current_user
+from tmdb_service import TMDBService
+import sys
+sys.path.append('/app/backend')
+from server import db
 
 router = APIRouter(prefix="/watchlist", tags=["watchlist"])
 tmdb = TMDBService()

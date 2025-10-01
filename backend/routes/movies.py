@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, Depends, Query
 from typing import List, Optional
-from ..models import Movie, MovieDetail, SearchResult, Genre
-from ..tmdb_service import TMDBService
-from ..routes.auth import get_current_user
+from models import Movie, MovieDetail, SearchResult, Genre
+from tmdb_service import TMDBService
+from routes.auth import get_current_user
 
 router = APIRouter(prefix="/movies", tags=["movies"])
 tmdb = TMDBService()
