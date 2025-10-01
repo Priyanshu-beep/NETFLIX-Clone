@@ -20,9 +20,9 @@ const Browse = () => {
           moviesAPI.getByGenre(28), // Action genre ID
         ]);
         
-        setPopularMovies(popular);
-        setTrendingContent(trending);
-        setActionMovies(action);
+        setPopularMovies(transformMoviesArray(popular));
+        setTrendingContent(transformMoviesArray(trending));
+        setActionMovies(transformMoviesArray(action));
       } catch (error) {
         console.error('Failed to fetch content:', error);
       } finally {
