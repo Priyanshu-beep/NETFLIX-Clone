@@ -42,8 +42,8 @@ const MovieCard = ({ movie, size = 'normal' }) => {
         {/* Movie Poster */}
         <div className="w-full h-full rounded-lg overflow-hidden shadow-xl">
           <img
-            src={movie.poster}
-            alt={movie.title}
+            src={transformedMovie.poster}
+            alt={transformedMovie.title}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
           />
         </div>
