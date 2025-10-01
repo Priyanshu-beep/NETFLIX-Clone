@@ -54,11 +54,11 @@ const MovieCard = ({ movie, size = 'normal' }) => {
             {/* Top section */}
             <div>
               <h3 className="text-white font-bold text-sm mb-2 line-clamp-2">
-                {movie.title}
+                {transformedMovie.title}
               </h3>
               <div className="flex items-center space-x-2 text-xs text-gray-300 mb-3">
-                <span>{movie.year}</span>
-                <span className="border border-gray-500 px-1 text-xs">{movie.rating}</span>
+                <span>{transformedMovie.year}</span>
+                <span className="border border-gray-500 px-1 text-xs">{transformedMovie.rating}</span>
               </div>
             </div>
 
