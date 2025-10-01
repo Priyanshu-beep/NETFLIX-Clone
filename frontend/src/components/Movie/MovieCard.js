@@ -65,7 +65,7 @@ const MovieCard = ({ movie, size = 'normal' }) => {
             {/* Bottom section */}
             <div>
               <p className="text-gray-300 text-xs mb-4 line-clamp-3">
-                {movie.genre}
+                {transformedMovie.genre}
               </p>
               
               {/* Action Buttons */}
