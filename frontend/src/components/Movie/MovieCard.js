@@ -9,6 +9,7 @@ const MovieCard = ({ movie, size = 'normal' }) => {
   const { addToWatchlist, removeFromWatchlist, isInWatchlist } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const transformedMovie = transformMovieData(movie);
   const inWatchlist = isInWatchlist(movie.id);
 
   const handleWatchlistToggle = (e) => {
