@@ -3,6 +3,7 @@ import Header from '../Layout/Header';
 import HeroSection from '../Movie/HeroSection';
 import MovieRow from '../Movie/MovieRow';
 import { moviesAPI } from '../../services/api';
+import { transformMoviesArray } from '../../utils/movieDataTransform';
 
 const Browse = () => {
   const [popularMovies, setPopularMovies] = useState([]);
