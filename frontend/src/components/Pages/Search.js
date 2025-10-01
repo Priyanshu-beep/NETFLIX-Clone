@@ -7,6 +7,7 @@ import { Search as SearchIcon, Filter } from 'lucide-react';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { transformMoviesArray } from '../../utils/movieDataTransform';
 
 const Search = () => {
   const { user } = useAuth();
