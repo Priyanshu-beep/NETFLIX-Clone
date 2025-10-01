@@ -32,7 +32,7 @@ app.add_middleware(
 )
 
 # Import and include routers
-from .routes import auth, movies, watchlist, genres
+from routes import auth, movies, watchlist, genres
 
 # Create API router
 api_router = APIRouter(prefix="/api")
