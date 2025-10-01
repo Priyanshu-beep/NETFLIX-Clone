@@ -1,23 +1,64 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../Layout/Header';
 import MovieCard from '../Movie/MovieCard';
 import { useAuth } from '../../contexts/AuthContext';
-import { popularMovies, trendingShows, actionMovies } from '../../mock/data';
+import { watchlistAPI } from '../../services/api';
 import { Heart, Trash2 } from 'lucide-react';
 import { Button } from '../ui/button';
 
 const MyList = () => {
-  const { user, watchlist, removeFromWatchlist } = useAuth();
-  
-  // Get movies from watchlist
-  const allContent = [...popularMovies, ...trendingShows, ...actionMovies];
-  const watchlistMovies = allContent.filter(movie => watchlist.includes(movie.id));
+  const { user, removeFromWatchlist, refreshWatchlist } = useAuth();
+  const [watchlistMovies, setWatchlistMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleRemoveAll = () => {
-    watchlist.forEach(movieId => {
-      removeFromWatchlist(movieId);
-    });
+  useEffect(() => {
+    const fetchWatchlist = async () => {
+      try {
+        const response = await watchlistAPI.get();
+        setWatchlistMovies(response.watchlist);
+      } catch (error) {
+        console.error('Failed to fetch watchlist:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchWatchlist();
+  }, []);
+
+  const handleRemoveAll = async () => {
+    try {
+      // Remove all movies from watchlist
+      for (const movie of watchlistMovies) {
+        await removeFromWatchlist(movie.id);
+      }
+      setWatchlistMovies([]);
+    } catch (error) {
+      console.error('Failed to clear watchlist:', error);
+    }
   };
+
+  const handleRemoveMovie = async (movieId) => {
+    try {
+      await removeFromWatchlist(movieId);
+      setWatchlistMovies(prev => prev.filter(movie => movie.id !== movieId));
+    } catch (error) {
+      console.error('Failed to remove movie:', error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black">
+        <Header />
+        <main className="pt-20 px-4 md:px-8">
+          <div className="flex justify-center py-20">
+            <div className="text-white text-xl">Loading your list...</div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black">
@@ -62,7 +103,7 @@ const MyList = () => {
                   className="absolute top-2 left-2 bg-black/70 hover:bg-black/90 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   onClick={(e) => {
                     e.stopPropagation();
-                    removeFromWatchlist(movie.id);
+                    handleRemoveMovie(movie.id);
                   }}
                 >
                   <Trash2 className="w-3 h-3" />

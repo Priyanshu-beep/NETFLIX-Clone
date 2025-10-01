@@ -11,13 +11,31 @@ import Profile from '../components/Pages/Profile';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
-  const { user } = useAuth();
+  const { user, initializing } = useAuth();
+  
+  if (initializing) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-white text-xl">Loading...</div>
+      </div>
+    );
+  }
+  
   return user ? children : <Navigate to="/login" replace />;
 };
 
 // Public Route Component (redirects to browse if already authenticated)
 const PublicRoute = ({ children }) => {
-  const { user } = useAuth();
+  const { user, initializing } = useAuth();
+  
+  if (initializing) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-white text-xl">Loading...</div>
+      </div>
+    );
+  }
+  
   return !user ? children : <Navigate to="/browse" replace />;
 };
 

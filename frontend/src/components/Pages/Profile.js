@@ -9,21 +9,41 @@ import { useToast } from '../../hooks/use-toast';
 import { User, Mail, Edit2, Save, X } from 'lucide-react';
 
 const Profile = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, updateProfile } = useAuth();
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || ''
   });
 
-  const handleSave = () => {
-    // In a real app, this would make an API call to update the user
-    setIsEditing(false);
-    toast({
-      title: "Profile updated",
-      description: "Your profile has been successfully updated."
-    });
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      const result = await updateProfile(formData);
+      if (result.success) {
+        setIsEditing(false);
+        toast({
+          title: "Profile updated",
+          description: "Your profile has been successfully updated."
+        });
+      } else {
+        toast({
+          title: "Update failed",
+          description: result.error,
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Update failed",
+        description: "An error occurred while updating your profile.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCancel = () => {
@@ -32,6 +52,14 @@ const Profile = () => {
       email: user?.email || ''
     });
     setIsEditing(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+    toast({
+      title: "Signed out",
+      description: "You have been successfully signed out."
+    });
   };
 
   return (
@@ -65,15 +93,17 @@ const Profile = () => {
                       size="sm"
                       className="bg-green-600 hover:bg-green-700 text-white"
                       onClick={handleSave}
+                      disabled={loading}
                     >
                       <Save className="w-4 h-4 mr-2" />
-                      Save
+                      {loading ? 'Saving...' : 'Save'}
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
                       className="border-gray-600 text-white hover:bg-gray-800"
                       onClick={handleCancel}
+                      disabled={loading}
                     >
                       <X className="w-4 h-4 mr-2" />
                       Cancel
@@ -94,6 +124,7 @@ const Profile = () => {
                 <div>
                   <h3 className="text-white text-lg font-semibold">{user?.name}</h3>
                   <p className="text-gray-400">{user?.email}</p>
+                  <p className="text-gray-500 text-sm">Member since {new Date(user?.created_at).getFullYear()}</p>
                 </div>
               </div>
 
@@ -152,7 +183,7 @@ const Profile = () => {
                 <Button
                   variant="destructive"
                   className="w-full"
-                  onClick={logout}
+                  onClick={handleLogout}
                 >
                   Sign Out
                 </Button>
@@ -166,20 +197,22 @@ const Profile = () => {
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Movies Watched</span>
-                  <span className="text-white font-semibold">127</span>
+                  <span className="text-gray-400">Watchlist Items</span>
+                  <span className="text-white font-semibold">{user?.watchlist?.length || 0}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">TV Shows</span>
-                  <span className="text-white font-semibold">34</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Hours Watched</span>
-                  <span className="text-white font-semibold">2,340</span>
+                  <span className="text-gray-400">Account Type</span>
+                  <span className="text-white font-semibold">Premium</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Member Since</span>
-                  <span className="text-white font-semibold">2023</span>
+                  <span className="text-white font-semibold">
+                    {user?.created_at ? new Date(user.created_at).getFullYear() : '2024'}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Profile Views</span>
+                  <span className="text-white font-semibold">1,247</span>
                 </div>
               </CardContent>
             </Card>
