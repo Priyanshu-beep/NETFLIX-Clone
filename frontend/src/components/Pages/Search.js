@@ -36,7 +36,7 @@ const Search = () => {
         );
       }
       
-      setSearchResults(filteredResults);
+      setSearchResults(transformMoviesArray(filteredResults));
     } catch (error) {
       console.error('Search failed:', error);
       setSearchResults([]);
